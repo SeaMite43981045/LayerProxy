@@ -6,7 +6,9 @@ package proxy
 
 import (
 	"LayerProxy/logger"
+	"LayerProxy/models"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net"
@@ -14,27 +16,34 @@ import (
 	"sync"
 )
 
-type ProxyInstance struct {
-	Name      string `json:"name"`
-	BackendIP string `json:"backend_ip"`
-	Subdomain string `json:"subdomain"`
-}
-
-func StartWildcardServer(listenAddr string, instances []ProxyInstance) {
+func StartWildcardServer(ctx context.Context, listenAddr string, instances []models.ProxyInstance) {
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		logger.Error(fmt.Sprintf("Wildcard 主端口 %s 监听失败: %s", listenAddr, err.Error()))
 		return
 	}
 
+	go func() {
+		<-ctx.Done()
+		logger.Info(fmt.Sprintf("停止 Wildcard 服务 [%s]", listenAddr))
+		listener.Close()
+	}()
+
 	logger.Info(fmt.Sprintf("LayerProxy [Wildcard] 模式启动 | 监听端口: %s", listenAddr))
 	for _, inst := range instances {
+		if inst.Name == "" {
+			return
+		}
 		logger.Info(fmt.Sprintf(" -> 路由加载: %s -> %s [%s]", inst.Subdomain, inst.BackendIP, inst.Name))
 	}
 
 	logger.Info("正在自检...")
 
 	for _, inst := range instances {
+		if inst.Name == "" {
+			return
+		}
+
 		_, err := net.Dial("tcp", inst.BackendIP)
 		if err != nil {
 			logger.Warning(fmt.Sprintf("无法连接到 Minecraft 服务器 %s: %s", inst.BackendIP, err.Error()))
@@ -46,18 +55,24 @@ func StartWildcardServer(listenAddr string, instances []ProxyInstance) {
 	for {
 		clientConn, err := listener.Accept()
 		if err != nil {
-			continue
+			return
 		}
 		go handleWildcardRouting(clientConn, instances)
 	}
 }
 
-func StartPortServer(listenAddr string, inst ProxyInstance) {
+func StartPortServer(ctx context.Context, listenAddr string, inst models.ProxyInstance) {
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		logger.Error(fmt.Sprintf("[%s] 端口 %s 监听失败: %s", inst.Name, listenAddr, err.Error()))
 		return
 	}
+
+	go func() {
+		<-ctx.Done()
+		logger.Info(fmt.Sprintf("停止端口服务 [%s] -> %s", inst.Name, inst.BackendIP))
+		listener.Close()
+	}()
 
 	logger.Info(fmt.Sprintf("LayerProxy [Port] 模式启动 | 实例: %s | 监听: %s -> %s", inst.Name, listenAddr, inst.BackendIP))
 
@@ -70,7 +85,7 @@ func StartPortServer(listenAddr string, inst ProxyInstance) {
 	}
 }
 
-func handleWildcardRouting(clientConn net.Conn, instances []ProxyInstance) {
+func handleWildcardRouting(clientConn net.Conn, instances []models.ProxyInstance) {
 	defer clientConn.Close()
 
 	playerName, isLogin, connectedDomain, initialData, err := identifyPlayer(clientConn)
@@ -78,7 +93,7 @@ func handleWildcardRouting(clientConn net.Conn, instances []ProxyInstance) {
 		return
 	}
 
-	var target *ProxyInstance
+	var target *models.ProxyInstance
 	for _, inst := range instances {
 		if strings.HasPrefix(connectedDomain, inst.Subdomain+".") || connectedDomain == inst.Subdomain {
 			target = &inst
@@ -99,7 +114,7 @@ func handleWildcardRouting(clientConn net.Conn, instances []ProxyInstance) {
 	}
 }
 
-func handleSimpleForward(clientConn net.Conn, inst ProxyInstance) {
+func handleSimpleForward(clientConn net.Conn, inst models.ProxyInstance) {
 	defer clientConn.Close()
 
 	playerName, isLogin, connectedDomain, initialData, err := identifyPlayer(clientConn)

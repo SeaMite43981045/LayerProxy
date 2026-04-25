@@ -7,10 +7,16 @@ package logger
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gookit/color"
+)
+
+var (
+	LogChan = make(chan string, 100)
 )
 
 func GetLogFileName() string {
@@ -67,7 +73,7 @@ func WriteToFile(message string) {
 
 func Info(message ...string) {
 	msg := strings.Join(message, " ")
-	color.Printf("<fg=gray;>[%s]</> <bg=blue;> WARN </> %s\n", GetFormatTime(), msg)
+	color.Printf("<fg=gray;>[%s]</> <bg=blue;> INFO </> %s\n", GetFormatTime(), msg)
 	WriteToFile(fmt.Sprintf("[%s][INFO] - %s\n", GetFormatTime(), msg))
 }
 
@@ -79,6 +85,35 @@ func Warning(message ...string) {
 
 func Error(message ...string) {
 	msg := strings.Join(message, " ")
-	color.Printf("<fg=gray;>[%s]</> <bg=red;> WARN </> %s\n", GetFormatTime(), msg)
+	color.Printf("<fg=gray;>[%s]</> <bg=red;> ERROR </> %s\n", GetFormatTime(), msg)
 	WriteToFile(fmt.Sprintf("[%s][ERROR] - %s\n", GetFormatTime(), msg))
+}
+
+func LogRequest(c *gin.Context) {
+	statusCode := strconv.Itoa(c.Writer.Status())
+	method := strings.Trim(c.Request.Method, " ")
+	remoteAddr := c.ClientIP()
+	url := c.Request.URL.Path
+
+	statusCodeLog := fmt.Sprintf("<bg=green;> %s </>", statusCode)
+	methodLog := fmt.Sprintf("<bg=blue;> %s     </>", method)
+
+	if strings.HasPrefix(statusCode, "4") {
+		statusCodeLog = fmt.Sprintf("<bg=yellow;> %s </>", statusCode)
+	} else if strings.HasPrefix(statusCode, "3") {
+		statusCodeLog = fmt.Sprintf("<bg=blue;> %s </>", statusCode)
+	}
+
+	switch method {
+	case "POST":
+		methodLog = fmt.Sprintf("<bg=yellow;> %s    </>", method)
+	case "DELETE":
+		methodLog = fmt.Sprintf("<bg=red;> %s   </>", method)
+	case "OPTIONS":
+		methodLog = fmt.Sprintf("<bg=gray;> %s </>", method)
+	}
+
+	msg := fmt.Sprintf("|%s| %15s |%s %s", statusCodeLog, remoteAddr, methodLog, url)
+	color.Printf("<fg=gray;>[%s]</> <bg=blue;> INFO </> %s\n", GetFormatTime(), msg)
+	WriteToFile(fmt.Sprintf("[%s][INFO] - | %s | %s | %s %s\n", GetFormatTime(), statusCode, remoteAddr, method, url))
 }

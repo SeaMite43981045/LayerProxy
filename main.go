@@ -5,29 +5,35 @@
 package main
 
 import (
+	"LayerProxy/database"
+	"LayerProxy/http"
 	"LayerProxy/logger"
+	"LayerProxy/models"
 	"LayerProxy/proxy"
+	"LayerProxy/setup"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
+	"time"
 )
 
-type ConfigFile struct {
-	Port struct {
-		PortStartAt int `json:"port_start_at"`
-	} `json:"port"`
-	Wildcard struct {
-		EnableWildcard   bool   `json:"enable_wildcard"`
-		WildcardDomain   string `json:"wildcard_domain"`
-		WildcardMainPort string `json:"wildcard_main_port"`
-	} `json:"wildcard"`
-}
+var cfg models.ConfigFile
 
 func main() {
 	logger.InitLogFile()
+	setup.InitFiles()
+
 	logger.Info("LayerProxy 正在启动...")
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+
+	rootCtx, rootCancel := context.WithCancel(context.Background())
 
 	configFile, err := os.ReadFile("./config/config.json")
 	if err != nil {
@@ -35,46 +41,51 @@ func main() {
 		return
 	}
 
-	var cfg ConfigFile
 	if err := json.Unmarshal(configFile, &cfg); err != nil {
 		logger.Error("配置文件格式解析失败:", err.Error())
 		return
 	}
 
-	proxy.InitDB()
+	database.InitDB()
 
 	var wg sync.WaitGroup
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		proxy.StartAPI()
+		http.StartAPI(rootCtx, cfg)
 	}()
 
-	servers := proxy.GetServersFromDB()
+	servers := database.GetServersFromDB()
 
 	if len(servers) == 0 {
-		logger.Warning("当前数据库中未保存任何实例！仅启动 API 服务器。")
+		logger.Warning("当前数据库中未保存任何实例！仅启动 Web 服务器。")
 	} else {
 		if cfg.Wildcard.EnableWildcard {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				proxy.StartWildcardServer(cfg.Wildcard.WildcardMainPort, servers)
-			}()
+			wg.Go(func() {
+				proxy.StartWildcardServer(rootCtx, cfg.Wildcard.WildcardMainPort, servers)
+			})
 		} else {
 			logger.Info("LayerProxy 以 [Port] 模式启动")
 			for i, server := range servers {
+				if server.Name == "" {
+					return
+				}
+
 				wg.Add(1)
 				assignedAddr := fmt.Sprintf(":%d", cfg.Port.PortStartAt+i)
-				go func(s proxy.ProxyInstance, addr string) {
+				go func(s models.ProxyInstance, addr string) {
 					defer wg.Done()
-					proxy.StartPortServer(addr, s)
+					proxy.StartPortServer(rootCtx, addr, s)
 				}(server, assignedAddr)
 			}
 
 			logger.Info("正在自检...")
 			for _, inst := range servers {
+				if inst.Name == "" {
+					return
+				}
+
 				_, err := net.Dial("tcp", inst.BackendIP)
 				if err != nil {
 					logger.Warning(fmt.Sprintf("无法连接到 Minecraft 服务器 %s: %s", inst.BackendIP, err.Error()))
@@ -87,5 +98,24 @@ func main() {
 
 	logger.Info("LayerProxy 系统初始化完成，运行中... (Crtl+C 退出)")
 
-	wg.Wait()
+	sig := <-sigChan
+	logger.Info(fmt.Sprintf("接收到退出信号 [%v]，正在释放资源...", sig))
+
+	rootCancel()
+
+	done := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		logger.Info("所有实例已安全结束。")
+	case <-time.After(5 * time.Second):
+		logger.Info("强制退出：部分连接未能在规定时间内关闭。")
+	}
+
+	logger.Info("LayerProxy 已完全退出。")
+	os.Exit(0)
 }
