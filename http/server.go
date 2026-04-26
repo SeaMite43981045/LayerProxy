@@ -27,6 +27,13 @@ type AuthRequest struct {
 	Key string `json:"key" binding:"required"`
 }
 
+type SetupRequest struct {
+	Key              string `json:"key" binding:"required"`
+	PortStartPort    int    `json:"port_start_at" binding:"required"`
+	WildcardDomain   string `json:"wildcard_domain"`
+	WildcardMainPort string `json:"wildcard_main_port" binding:"required"`
+}
+
 //go:embed .dist/*
 var staticFiles embed.FS
 
@@ -55,16 +62,35 @@ func StartAPI(ctx context.Context, cfg models.ConfigFile) {
 
 	a := r.Group("/api")
 	{
+		a.GET("/status", func(c *gin.Context) {
+			hasKey := true
+			if cfg.Server.Key == "" {
+				hasKey = false
+			}
+
+			c.JSON(http.StatusOK, gin.H{"status": "ok", "hasKey": hasKey})
+		})
+
 		a.POST("/setup", func(c *gin.Context) {
 			if cfg.Server.Key != "" {
 				c.JSON(http.StatusFound, gin.H{"message": "已经初始化，请前往登录", "redirect": "/login"})
 				return
 			}
 
-			var req AuthRequest
+			var req SetupRequest
 			if err := c.ShouldBindJSON(&req); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "密钥不能为空"})
-				return
+				if req.Key == "" {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "密钥不能为空"})
+					return
+				}
+				if req.WildcardMainPort == "" {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "Wildcard 主端口不能为空"})
+					return
+				}
+				if req.PortStartPort == 0 {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "Port 起始端口不能为空"})
+					return
+				}
 			}
 
 			hashedKey, err := bcrypt.GenerateFromPassword([]byte(req.Key), bcrypt.DefaultCost)
@@ -75,12 +101,15 @@ func StartAPI(ctx context.Context, cfg models.ConfigFile) {
 			}
 
 			cfg.Server.Key = string(hashedKey)
+			cfg.Port.PortStartAt = int(req.PortStartPort)
+			cfg.Wildcard.WildcardDomain = string(req.WildcardDomain)
+			cfg.Wildcard.WildcardMainPort = string(req.WildcardMainPort)
 			if err := saveConfigToFile(cfg); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "保存配置失败"})
 				return
 			}
 
-			logger.Info("管理员密钥设置成功")
+			logger.Info("服务器初始化成功")
 			c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "初始化成功"})
 		})
 
@@ -189,7 +218,7 @@ func StartAPI(ctx context.Context, cfg models.ConfigFile) {
 	<-ctx.Done()
 	logger.Info("正在关闭 Web 管理接口...")
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		logger.Error("Web 服务关闭失败: " + err.Error())

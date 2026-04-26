@@ -2,7 +2,7 @@ import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { authService } from '@/services/authService'
 import axios from 'axios'
 
-export const BASE_URL: string = 'http://localhost:23754/api'
+export const BASE_URL: string = '/api'
 
 export default class HttpRequest {
   private async _makeRequest(
@@ -31,9 +31,21 @@ export default class HttpRequest {
     return await axios(requestConfig)
   }
 
-  async setup(key: string) {
+  async status() {
+    return this._makeRequest('/status', 'get')
+  }
+
+  async setup(
+    key: string,
+    port_start_at: number,
+    wildcard_domain: string,
+    wildcard_main_port: string,
+  ) {
     return this._makeRequest('/setup', 'post', {
       key,
+      port_start_at,
+      wildcard_domain,
+      wildcard_main_port,
     })
   }
 

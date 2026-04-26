@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { CircleAlertIcon, CircleXIcon, InfoIcon, CircleCheckIcon, type LucideIcon } from '@lucide/vue'
-import { NCard, NFlex, NText, NIcon } from 'naive-ui'
+import {
+  CircleAlertIcon,
+  CircleXIcon,
+  InfoIcon,
+  CircleCheckIcon,
+  type LucideIcon,
+} from '@lucide/vue'
+import { NCard, NFlex, NText, NIcon, type MessageType } from 'naive-ui'
 import { h, ref, type Ref } from 'vue'
 
 const props = defineProps<{
-  type: 'info' | 'warn' | 'error' | 'success'
+  type: MessageType
   title: string
   content: string
 }>()
@@ -14,7 +20,7 @@ const cardClassd: Ref<string> = ref<string>(props.type + '-card')
 const cardIcon: Ref<LucideIcon> = ref<LucideIcon>(InfoIcon)
 if (props.type === 'info') {
   cardIcon.value = InfoIcon
-} else if (props.type === 'warn') {
+} else if (props.type === 'warning') {
   cardIcon.value = CircleAlertIcon
 } else if (props.type === 'error') {
   cardIcon.value = CircleXIcon

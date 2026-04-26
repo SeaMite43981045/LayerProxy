@@ -1,4 +1,5 @@
 import LoginView from '@/views/LoginView.vue'
+import SetupView from '@/views/SetupView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -8,6 +9,11 @@ const router = createRouter({
       name: 'Login',
       path: '/login',
       component: LoginView,
+    },
+    {
+      name: 'Setup',
+      path: '/setup',
+      component: SetupView,
     },
   ],
 })

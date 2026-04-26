@@ -112,7 +112,7 @@ func main() {
 	select {
 	case <-done:
 		logger.Info("所有实例已安全结束。")
-	case <-time.After(5 * time.Second):
+	case <-time.After(2 * time.Second):
 		logger.Info("强制退出：部分连接未能在规定时间内关闭。")
 	}
 

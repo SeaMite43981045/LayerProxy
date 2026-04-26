@@ -7,9 +7,5 @@ export const authService = {
 
   getToken(): string | null {
     return localStorage.getItem('lp_token')
-  }
-}
-
-export interface UnauthorizedResponse {
-    error: string
+  },
 }

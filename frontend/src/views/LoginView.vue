@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import MessageComponent from '@/component/MessageComponent.vue'
 import { KeyIcon, LogInIcon } from '@lucide/vue'
-import { NLayout, NFlex, NCard, NInput, NText, NButton, useMessage } from 'naive-ui'
-import type { MessageApiInjection } from 'naive-ui/es/message/src/MessageProvider'
-import { h, ref, type Ref } from 'vue'
+import { NLayout, NFlex, NCard, NInput, NText, NButton } from 'naive-ui'
+import { h, onMounted, ref, type Ref } from 'vue'
 import HttpRequest from '@/http/httpRequest'
-import { type UnauthorizedResponse } from '@/services/authService'
+import { authService } from '@/services/authService'
 import { AxiosError } from 'axios'
+import { useRouter, type Router } from 'vue-router'
+import { createMessage } from '@/message/showMessage'
+import type { ResponseError } from '@/interfaces/response'
 
-const message: MessageApiInjection = useMessage()
+const router: Router = useRouter()
 const httpRequest: HttpRequest = new HttpRequest()
 
 const isLogin: Ref<boolean> = ref<boolean>(false)
@@ -17,44 +18,42 @@ const inputValue: Ref<string> = ref<string>('')
 const handleLogin = async () => {
   isLogin.value = true
   if (inputValue.value == '') {
-    message.create("", {
-      keepAliveOnHover: true,
-      render: () =>
-        h(MessageComponent, {
-          type: 'error',
-          title: '登录失败',
-          content: '密钥不能为空！',
-        }),
-    })
+    createMessage('error', '登录失败', '密钥不能为空！')
     isLogin.value = false
     return
   }
 
-  httpRequest.login(inputValue.value)
-  .then((data) => {
-    message.create("", {
-      keepAliveOnHover: true,
-      render: () => h(MessageComponent, {
-        type: 'success',
-        title: "登陆成功",
-        content: data?.data?.message || "未知错误"
-      })
+  httpRequest
+    .login(inputValue.value)
+    .then((data) => {
+      authService.setToken(data.data.token)
+      createMessage('success', '登录成功')
     })
-  })
-  .catch((error: AxiosError<UnauthorizedResponse>) => {
-    message.create("", {
-      keepAliveOnHover: true,
-      render: () => h(MessageComponent, {
-        type: 'error',
-        title: "登录失败",
-        content: error.response?.data?.error || `未知错误: ${error.message}`
-      })
+    .catch((error: AxiosError<ResponseError>) => {
+      if (error.response?.data.redirect) {
+        createMessage('error', '登录失败', '请先对该系统进行初始化！')
+        router.push({ name: 'Setup' })
+      } else {
+        createMessage(
+          'error',
+          '登录失败',
+          error.response?.data?.error || `未知错误: ${error.message}`,
+        )
+      }
     })
-  })
-  .finally(() => {
-    isLogin.value = false
-  })
+    .finally(() => {
+      isLogin.value = false
+    })
 }
+
+onMounted(() => {
+  httpRequest.status().then((data) => {
+    if (!(data.data.hasKey as boolean)) {
+      createMessage('info', '提示', '请先完成初始化')
+      router.push({ name: 'Setup' })
+    }
+  })
+})
 </script>
 
 <template>
