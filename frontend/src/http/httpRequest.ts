@@ -54,4 +54,44 @@ export default class HttpRequest {
       key,
     })
   }
+
+  async systemInfo() {
+    return this._makeRequest('/v1/system/info', 'get')
+  }
+
+  async getConfig() {
+    return this._makeRequest('/v1/config', 'get')
+  }
+
+  async updateConfig(data: unknown) {
+    return this._makeRequest('/v1/config', 'post', data)
+  }
+
+  async listLogFiles() {
+    return this._makeRequest('/v1/logs/files', 'get')
+  }
+
+  async downloadLogFile(name: string) {
+    return this._makeRequest(`/v1/logs/files/${name}`, 'get')
+  }
+
+  async deleteLogFile(name: string) {
+    return this._makeRequest(`/v1/logs/files/${name}`, 'delete')
+  }
+
+  async checkUpdate() {
+    return this._makeRequest('/v1/update', 'get')
+  }
+
+  async getPreferences() {
+    return this._makeRequest('/v1/preferences', 'get')
+  }
+
+  async updatePreferences(data: unknown) {
+    return this._makeRequest('/v1/preferences', 'post', data)
+  }
+
+  async getServers() {
+    return this._makeRequest('/v1/servers', 'get')
+  }
 }
