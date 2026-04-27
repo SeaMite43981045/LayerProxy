@@ -54,10 +54,16 @@ func (b *Broadcaster) Broadcast(entry LogEntry) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	for ch := range b.clients {
-		select {
-		case ch <- entry:
-		default:
-		}
+		func() {
+			defer func() {
+				if recover() != nil {
+				}
+			}()
+			select {
+			case ch <- entry:
+			default:
+			}
+		}()
 	}
 }
 
