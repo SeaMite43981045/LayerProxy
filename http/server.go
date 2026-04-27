@@ -52,6 +52,11 @@ func StartAPI(ctx context.Context, cfg models.ConfigFile) {
 
 	r := gin.Default()
 
+	r.Use(func(c *gin.Context) {
+		c.Set("config", cfg)
+		c.Next()
+	})
+
 	subFS, _ := fs.Sub(staticFiles, ".dist")
 	staticHandler := http.FS(subFS)
 
@@ -187,6 +192,17 @@ func StartAPI(ctx context.Context, cfg models.ConfigFile) {
 			rowsAffected, _ := result.RowsAffected()
 			c.JSON(http.StatusOK, gin.H{"status": "deleted", "rows_affected": rowsAffected})
 		})
+
+		v1.GET("/system/info", HandleSystemInfo)
+		v1.GET("/config", HandleGetConfig)
+		v1.POST("/config", HandleUpdateConfig)
+		v1.GET("/logs/stream", HandleLogStream)
+		v1.GET("/logs/files", HandleListLogFiles)
+		v1.GET("/logs/files/:name", HandleDownloadLogFile)
+		v1.DELETE("/logs/files/:name", HandleDeleteLogFile)
+		v1.GET("/update", HandleCheckUpdate)
+		v1.GET("/preferences", HandleGetPreferences)
+		v1.POST("/preferences", HandleUpdatePreferences)
 	}
 
 	r.NoRoute(func(c *gin.Context) {
