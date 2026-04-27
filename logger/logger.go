@@ -17,8 +17,7 @@ import (
 )
 
 var (
-	LogChan       = make(chan string, 100)
-	broadcastChan = make(chan LogEntry, 100)
+	LogChan = make(chan string, 100)
 )
 
 type LogEntry struct {
@@ -52,8 +51,8 @@ func (b *Broadcaster) Unsubscribe(ch chan LogEntry) {
 }
 
 func (b *Broadcaster) Broadcast(entry LogEntry) {
-	b.mu.RLock()
-	defer b.mu.RUnlock()
+	b.mu.Lock()
+	defer b.mu.Unlock()
 	for ch := range b.clients {
 		select {
 		case ch <- entry:
