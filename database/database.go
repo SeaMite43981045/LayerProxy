@@ -46,20 +46,28 @@ func InitDB() {
 	_, err = DB.Exec(query)
 	if err != nil {
 		logger.Error("初始化数据库表失败: " + err.Error())
+		return
 	}
 
 	_, err = DB.Exec("DELETE FROM servers WHERE name = '' OR name IS NULL")
 	if err != nil {
 		logger.Error("清理无效数据库记录失败: " + err.Error())
+		return
 	}
 
 	_, err = DB.Exec(`CREATE TABLE IF NOT EXISTS preferences (
 		id INTEGER PRIMARY KEY CHECK (id = 1),
-		language TEXT DEFAULT 'zh',
-		theme TEXT DEFAULT 'dark'
+		language TEXT NOT NULL DEFAULT 'zh',
+		theme TEXT NOT NULL DEFAULT 'dark'
 	)`)
 	if err != nil {
 		logger.Error("创建 preferences 表失败: " + err.Error())
+		return
+	}
+
+	_, err = DB.Exec(`INSERT OR IGNORE INTO preferences (id, language, theme) VALUES (1, 'zh', 'dark')`)
+	if err != nil {
+		logger.Error("插入默认偏好设置失败: " + err.Error())
 		return
 	}
 }
