@@ -36,7 +36,7 @@ Shell 组件，包裹整个管理后台界面：
 顶部导航栏组件：
 - 左侧：应用 Logo / 名称
 - 右侧功能项：
-  - **官方文档**：外链跳转按钮
+  - **官方文档**：外链跳转按钮（`https://github.com/SeaMite43981045/LayerProxy`）
   - **检查更新**：调用后端 API 检查 GitHub Release 版本
   - **主题切换**：仅显示当前主题图标（Dark → `Moon`，Light → `Sun`，来自 lucide-vue）
   - **用户头像/名称**：占位展示
@@ -64,7 +64,7 @@ Shell 组件，包裹整个管理后台界面：
   - SSE 连接到 `/api/v1/logs/stream`
   - 顶部工具栏：连接状态指示、清空按钮（使用 `NButton` 默认样式）
   - 自动滚动到底部，用户手动上滑时暂停自动滚动
-- **右侧：日志文件列表**（固定宽度约 220px）
+- **右侧：日志文件列表**（固定宽度约 240px）
   - 列出 `logs/` 目录下所有日志文件
   - 每项显示文件名、下载按钮（`Download` 图标）、删除按钮（`Trash2` 图标）
 
@@ -209,11 +209,11 @@ data: {"time":"2026-04-27T10:23:01Z","level":"INFO","message":"Server started"}
   "current_version": "1.0.0",
   "latest_version": "1.1.0",
   "has_update": true,
-  "release_url": "https://github.com/owner/repo/releases/tag/v1.1.0"
+  "release_url": "https://github.com/SeaMite43981045/LayerProxy/releases/tag/v1.1.0"
 }
 ```
 
-当前版本号硬编码在独立的 `version.go` 中（例如 `const Version = "1.0.0"`）。GitHub 仓库地址由用户配置或硬编码。
+当前版本号硬编码在独立的 `version.go` 中（例如 `const Version = "1.0.0"`）。
 
 **GET /api/v1/preferences**
 
