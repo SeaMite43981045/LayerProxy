@@ -25,8 +25,10 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NLayoutHeader, NSpace, NButton, NIcon, NTag } from 'naive-ui'
 import { Moon, Sun } from 'lucide-vue-next'
-import httpRequest from '@/http/httpRequest'
+import HttpRequest from '@/http/httpRequest'
+import { createMessage } from '@/message/showMessage'
 
+const httpRequest = new HttpRequest()
 const { t } = useI18n()
 const isDark = ref(true)
 
@@ -38,12 +40,12 @@ async function handleCheckUpdate() {
   try {
     const res = await httpRequest.checkUpdate()
     if (res.data.has_update) {
-      window.$message?.info(`发现新版本: ${res.data.latest_version}`)
+      createMessage('info', '发现新版本', res.data.latest_version)
     } else {
-      window.$message?.success('当前已是最新版本')
+      createMessage('success', '当前已是最新版本')
     }
   } catch {
-    window.$message?.error('检查更新失败')
+    createMessage('error', '检查更新失败')
   }
 }
 </script>

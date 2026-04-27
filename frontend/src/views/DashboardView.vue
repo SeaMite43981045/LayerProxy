@@ -55,8 +55,10 @@ import {
   NDataTable, NButton,
 } from 'naive-ui'
 import { Cpu, MemoryStick, Monitor } from 'lucide-vue-next'
-import httpRequest from '@/http/httpRequest'
+import HttpRequest from '@/http/httpRequest'
+import { createMessage } from '@/message/showMessage'
 
+const httpRequest = new HttpRequest()
 const { t } = useI18n()
 
 const systemInfo = ref({
@@ -103,7 +105,7 @@ async function loadData() {
     const instRes = await httpRequest.getServers()
     instances.value = instRes.data
   } catch {
-    window.$message?.error('加载数据失败')
+    createMessage('error', '加载数据失败')
   }
 }
 

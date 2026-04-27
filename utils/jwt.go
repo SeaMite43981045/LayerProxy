@@ -34,6 +34,13 @@ func GenerateToken(username string) (string, error) {
 	return token.SignedString(JwtSecret)
 }
 
+func ValidateToken(tokenString string) bool {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return JwtSecret, nil
+	})
+	return err == nil && token.Valid
+}
+
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")

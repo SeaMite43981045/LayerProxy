@@ -1,0 +1,65 @@
+<h2>Overall Layout Design</h2>
+<p class="subtitle">Sidebar + Navbar + Content, filling the entire screen</p>
+
+<div class="mockup">
+  <div class="mockup-header">Preview: App Shell Layout</div>
+  <div class="mockup-body" style="padding:0">
+    <div style="display:flex;height:500px;font-family:sans-serif;font-size:12px">
+      <!-- Sidebar -->
+      <div style="width:180px;background:#1e1e1e;color:#fff;display:flex;flex-direction:column;padding:16px 0;box-sizing:border-box">
+        <div style="padding:0 20px 20px;font-weight:bold;font-size:14px">LayerProxy</div>
+        <div style="padding:10px 20px;background:#2d2d2d;border-left:3px solid #63e2b7">仪表盘</div>
+        <div style="padding:10px 20px;color:#aaa">日志</div>
+        <div style="padding:10px 20px;color:#aaa">设置</div>
+      </div>
+      <!-- Main Area -->
+      <div style="flex:1;display:flex;flex-direction:column;background:#0f0f0f">
+        <!-- Navbar -->
+        <div style="height:48px;background:#181818;display:flex;align-items:center;justify-content:flex-end;padding:0 20px;gap:16px;border-bottom:1px solid #333;color:#ccc">
+          <span>官方文档</span>
+          <span>检查更新</span>
+          <span>🌙/☀️</span>
+          <span style="color:#fff">Admin</span>
+        </div>
+        <!-- Content -->
+        <div style="flex:1;padding:20px;overflow:auto">
+          <div style="background:#181818;border-radius:8px;padding:20px;height:100%;box-sizing:border-box;color:#fff">
+            Dashboard Content Area (fills remaining space)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Layout Structure</h3>
+  <ul>
+    <li><strong>NLayout</strong> root with <code>style="height: 100vh"</code></li>
+    <li><strong>NLayoutSider</strong> (left): Sidebar component with collapse support</li>
+    <li><strong>NLayout</strong> (right):
+      <ul>
+        <li><strong>NLayoutHeader</strong>: Navbar component</li>
+        <li><strong>NLayoutContent</strong>: Router-view for pages</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="section">
+  <h3>Components</h3>
+  <ul>
+    <li><code>AppLayout.vue</code> — Shell wrapping sidebar + navbar + content</li>
+    <li><code>Sidebar.vue</code> — 3 menu items with icons (LayoutDashboard, ScrollText, Settings)</li>
+    <li><code>Navbar.vue</code> — Right-aligned items: Theme toggle, Check Update, Docs, User avatar</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h3>Pages</h3>
+  <ul>
+    <li><code>DashboardView.vue</code> — Existing HomeView content, moved here</li>
+    <li><code>LoggingView.vue</code> — Real-time log stream with scrollable panel</li>
+    <li><code>SettingsView.vue</code> — Two tabs: System Config + User Preferences</li>
+  </ul>
+</div>

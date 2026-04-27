@@ -1,0 +1,84 @@
+<h2>Page Designs</h2><p class="subtitle">Dashboard, Logging, and Settings content</p>
+
+<div class="mockup">
+  <div class="mockup-header">Dashboard Page</div>
+  <div class="mockup-body" style="font-size:12px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px">
+        <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:12px"><strong>CPU Usage</strong><div style="margin-top:8px">▓▓▓▓▓▓░░░░ 60%</div></div>
+        <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:12px"><strong>Memory</strong><div style="margin-top:8px">▓▓▓▓░░░░░░ 40%</div></div>
+        <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:12px"><strong>OS Info</strong><div style="margin-top:8px">Windows 11</div></div>
+      </div>
+      <div style="background:#f5f5f5;border-radius:6px;padding:12px;flex:1">
+        <strong>Proxy Instances</strong>
+        <div style="margin-top:8px">Table with columns: Name | Backend IP | Subdomain | Status | Actions</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">Logging Page</div>
+  <div class="mockup-body" style="font-size:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <strong>Real-time Logs</strong>
+      <span style="color:#666">● Connected</span>
+    </div>
+    <div style="background:#0f0f0f;color:#ccc;font-family:monospace;padding:12px;border-radius:6px;height:200px;overflow-y:auto">
+      <div>[2025-01-15 10:23:01] INFO Server started on :25565</div>
+      <div>[2025-01-15 10:23:05] INFO Player Steve connected to survival-01</div>
+      <div>[2025-01-15 10:23:12] WARN High memory usage detected</div>
+      <div>[2025-01-15 10:24:01] INFO Scheduled health check passed</div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="mock-button">Clear</button>
+      <button class="mock-button">Pause</button>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">Settings Page</div>
+  <div class="mockup-body" style="font-size:12px">
+    <div style="display:flex;gap:8px;margin-bottom:12px;border-bottom:1px solid #ddd;padding-bottom:8px">
+      <span style="font-weight:bold;border-bottom:2px solid #333;padding-bottom:8px">System Config</span>
+      <span style="color:#666;padding-bottom:8px">Preferences</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><label>Web Port</label><input class="mock-input" value="23754"/></div>
+      <div><label>Port Start At</label><input class="mock-input" value="25565"/></div>
+      <div><label>Wildcard Domain</label><input class="mock-input" value="*.example.com"/></div>
+      <div><label>Wildcard Main Port</label><input class="mock-input" value="25565"/></div>
+      <div style="margin-top:8px"><button class="mock-button" style="background:#333;color:#fff">Save Changes</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+<h3>Dashboard Page</h3>
+<ul>
+<li>Reuse existing HomeView content (system stats + proxy instances table)</li>
+<li>Stats cards at top (CPU, Memory, OS) using <code>NCard</code> or <code>NStatistic</code></li>
+<li>Proxy instances table below using <code>NDataTable</code> with Add/Edit modal</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>Logging Page</h3>
+<ul>
+<li>Monospace log viewer using <code>NLog</code> or custom scrollable div with <code>NCode</code>-style styling</li>
+<li>SSE connection to <code>/api/v1/logs/stream</code></li>
+<li>Action bar: Clear logs, Pause/Resume stream, connection status indicator</li>
+<li>Auto-scroll to bottom when new logs arrive (unless user scrolled up)</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>Settings Page</h3>
+<ul>
+<li>Two tabs using <code>NTabs</code>: <strong>System Config</strong> and <strong>Preferences</strong></li>
+<li><strong>System Config tab:</strong> Web Port, Port Start At, Wildcard Domain, Wildcard Main Port (read from config.json)</li>
+<li><strong>Preferences tab:</strong> Language selector (Chinese/English), default theme preference</li>
+<li>Save buttons per tab with validation</li>
+</ul>
+</div>

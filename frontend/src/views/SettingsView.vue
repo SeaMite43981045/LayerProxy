@@ -48,8 +48,10 @@ import {
   NCard, NTabs, NTabPane, NForm, NFormItem,
   NInput, NInputNumber, NSelect, NButton,
 } from 'naive-ui'
-import httpRequest from '@/http/httpRequest'
+import HttpRequest from '@/http/httpRequest'
+import { createMessage } from '@/message/showMessage'
 
+const httpRequest = new HttpRequest()
 const { t, locale } = useI18n()
 
 const config = ref({
@@ -84,9 +86,9 @@ async function loadConfig() {
 async function saveConfig() {
   try {
     await httpRequest.updateConfig(config.value)
-    window.$message?.success(t('settings.saved'))
+    createMessage('success', t('settings.saved'))
   } catch {
-    window.$message?.error(t('common.error'))
+    createMessage('error', t('common.error'))
   }
 }
 
@@ -102,9 +104,9 @@ async function savePrefs() {
     await httpRequest.updatePreferences(prefs.value)
     localStorage.setItem('lp_language', prefs.value.language)
     locale.value = prefs.value.language
-    window.$message?.success(t('settings.saved'))
+    createMessage('success', t('settings.saved'))
   } catch {
-    window.$message?.error(t('common.error'))
+    createMessage('error', t('common.error'))
   }
 }
 

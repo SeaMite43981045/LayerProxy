@@ -1,0 +1,138 @@
+<h2>更新后的页面设计</h2>
+<p class="subtitle">根据反馈调整后的 Dashboard、日志和设置页</p>
+
+<div class="mockup">
+  <div class="mockup-header">Dashboard Page - 系统信息</div>
+  <div class="mockup-body" style="font-size:12px">
+    <div style="display:flex;gap:12px;margin-bottom:12px">
+      <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:12px">
+        <div style="display:flex;align-items:center;gap:6px"><span>💻</span><strong>CPU</strong></div>
+        <div style="margin-top:6px;font-size:11px;color:#555">Intel(R) Core(TM) i7-13700K</div>
+        <div style="margin-top:4px;font-size:11px;color:#888">16 Cores / 24 Threads</div>
+        <div style="margin-top:6px">▓▓▓▓▓▓░░░░ 60%</div>
+      </div>
+      <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:12px">
+        <div style="display:flex;align-items:center;gap:6px"><span>🧠</span><strong>内存</strong></div>
+        <div style="margin-top:6px;font-size:11px;color:#555">32 GB Total</div>
+        <div style="margin-top:4px;font-size:11px;color:#888">Used: 12.8 GB / Free: 19.2 GB</div>
+        <div style="margin-top:6px">▓▓▓▓░░░░░░ 40%</div>
+      </div>
+      <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:12px">
+        <div style="display:flex;align-items:center;gap:6px"><span>⚙️</span><strong>系统</strong></div>
+        <div style="margin-top:6px;font-size:11px;color:#555">Windows 11 Pro</div>
+        <div style="margin-top:4px;font-size:11px;color:#888">10.0.26300</div>
+        <div style="margin-top:4px;font-size:11px;color:#888">Uptime: 3d 12h 45m</div>
+      </div>
+    </div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:12px">
+      <strong>代理实例列表</strong>
+      <div style="margin-top:8px">[保留原 HomeView 的 NDataTable 样式]</div>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">日志页面</div>
+  <div class="mockup-body" style="font-size:12px">
+    <div style="display:flex;gap:12px;height:220px">
+      <!-- 左侧：日志文件列表 -->
+      <div style="width:200px;background:#f5f5f5;border-radius:6px;padding:12px;display:flex;flex-direction:column">
+        <strong style="margin-bottom:8px">日志文件</strong>
+        <div style="flex:1;overflow:auto;font-size:11px">
+          <div style="padding:6px;background:#fff;border-radius:4px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">
+            <span>app.log</span>
+            <span style="color:#666">↓ 🗑️</span>
+          </div>
+          <div style="padding:6px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">
+            <span>app-20250114.log</span>
+            <span style="color:#666">↓ 🗑️</span>
+          </div>
+        </div>
+      </div>
+      <!-- 右侧：实时日志流 -->
+      <div style="flex:1;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong>实时日志流</strong>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:#4caf50;font-size:11px">● 已连接</span>
+            <button class="mock-button" style="font-size:11px;padding:4px 10px">清空</button>
+          </div>
+        </div>
+        <div style="background:#0f0f0f;color:#ccc;font-family:monospace;padding:12px;border-radius:6px;flex:1;overflow-y:auto;font-size:11px">
+          <div>[2025-01-15 10:23:01] INFO Server started</div>
+          <div>[2025-01-15 10:23:05] INFO Player Steve connected</div>
+          <div>[2025-01-15 10:23:12] WARN High memory usage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">设置页面 - 系统配置</div>
+  <div class="mockup-body" style="font-size:12px">
+    <div style="display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid #ddd;padding-bottom:8px">
+      <span style="font-weight:bold;border-bottom:2px solid #333;padding-bottom:8px">系统配置</span>
+      <span style="color:#666;padding-bottom:8px">偏好设置</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:1">
+          <div style="font-weight:bold">Web 端口</div>
+          <div style="font-size:11px;color:#666">Web 管理后台监听的端口号</div>
+        </div>
+        <input class="mock-input" value="23754" style="width:120px;text-align:right"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:1">
+          <div style="font-weight:bold">起始端口</div>
+          <div style="font-size:11px;color:#666">为每个代理实例分配端口的起始值</div>
+        </div>
+        <input class="mock-input" value="25565" style="width:120px;text-align:right"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:1">
+          <div style="font-weight:bold">泛域名</div>
+          <div style="font-size:11px;color:#666">用于子域名路由的通配符域名</div>
+        </div>
+        <input class="mock-input" value="*.example.com" style="width:180px;text-align:right"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:1">
+          <div style="font-weight:bold">泛域名主端口</div>
+          <div style="font-size:11px;color:#666">泛域名模式下的主监听端口</div>
+        </div>
+        <input class="mock-input" value="25565" style="width:120px;text-align:right"/>
+      </div>
+      <div style="margin-top:8px;text-align:right"><button class="mock-button" style="background:#333;color:#fff;padding:6px 16px">保存更改</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Dashboard 更新点</h3>
+  <ul>
+    <li>CPU 卡片：型号、核心/线程数 + 使用率进度条 + 图标（Lucide: Cpu）</li>
+    <li>内存卡片：总容量、已用/可用 + 使用率进度条 + 图标（Lucide: MemoryStick）</li>
+    <li>系统卡片：OS 名称、版本号、运行时间 + 图标（Lucide: Monitor）</li>
+    <li>实例列表：保持原 HomeView 的 NDataTable 样式</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h3>日志页更新点</h3>
+  <ul>
+    <li>左侧面板：日志文件列表，每项显示文件名 + 下载/删除按钮</li>
+    <li>右侧面板：实时日志流（SSE），带连接状态指示和清空按钮</li>
+    <li>清空按钮使用 Naive UI 的 <code>NButton</code> 默认样式，不自定义 mock 样式</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h3>设置页更新点</h3>
+  <ul>
+    <li>每个配置项采用 "标签+解释" 的左右布局（标签在左，输入框在右）</li>
+    <li>每项都有 subtitle 解释其作用</li>
+    <li>使用 <code>NForm / NFormItem</code> 保持样式统一美观</li>
+  </ul>
+</div>

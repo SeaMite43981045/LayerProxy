@@ -1,0 +1,58 @@
+<h2>Updated Layout Design</h2>
+<p class="subtitle">Navbar spans full width, sidebar sits below</p>
+
+<div class="mockup">
+  <div class="mockup-header">Preview: Full-width Navbar + Sidebar Below</div>
+  <div class="mockup-body" style="padding:0">
+    <div style="display:flex;flex-direction:column;height:500px;font-family:sans-serif;font-size:12px">
+      <!-- Navbar (full width) -->
+      <div style="height:48px;background:#181818;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #333;color:#ccc;flex-shrink:0">
+        <div style="font-weight:bold;color:#fff;font-size:14px">LayerProxy</div>
+        <div style="display:flex;gap:16px;align-items:center">
+          <span>官方文档</span>
+          <span>检查更新</span>
+          <span>🌙</span>
+          <span style="color:#fff">Admin</span>
+        </div>
+      </div>
+      <!-- Body: Sidebar + Content -->
+      <div style="flex:1;display:flex;overflow:hidden">
+        <!-- Sidebar -->
+        <div style="width:180px;background:#1e1e1e;color:#fff;display:flex;flex-direction:column;padding:16px 0;box-sizing:border-box;flex-shrink:0">
+          <div style="padding:10px 20px;background:#2d2d2d;border-left:3px solid #63e2b7">仪表盘</div>
+          <div style="padding:10px 20px;color:#aaa">日志</div>
+          <div style="padding:10px 20px;color:#aaa">设置</div>
+        </div>
+        <!-- Content -->
+        <div style="flex:1;background:#0f0f0f;padding:20px;overflow:auto">
+          <div style="background:#181818;border-radius:8px;padding:20px;height:100%;box-sizing:border-box;color:#fff">
+            Dashboard Content Area
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Updated Layout Structure</h3>
+  <ul>
+    <li><strong>NLayout</strong> root with <code>style="height: 100vh"</code></li>
+    <li><strong>NLayoutHeader</strong> (top): Full-width Navbar with Logo (left) + Actions (right)</li>
+    <li><strong>NLayout</strong> (below header):
+      <ul>
+        <li><strong>NLayoutSider</strong> (left): Sidebar component</li>
+        <li><strong>NLayoutContent</strong> (right): Router-view for pages</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="section">
+  <h3>Theme Toggle Behavior</h3>
+  <p>Only the <em>current</em> theme icon is displayed:</p>
+  <ul>
+    <li>Dark mode → shows <code>Moon</code> icon (from lucide-vue)</li>
+    <li>Light mode → shows <code>Sun</code> icon (from lucide-vue)</li>
+  </ul>
+</div>

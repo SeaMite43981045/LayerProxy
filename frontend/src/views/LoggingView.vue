@@ -53,7 +53,10 @@ import {
   NThing, NIcon,
 } from 'naive-ui'
 import { Download, Trash2 } from 'lucide-vue-next'
-import httpRequest from '@/http/httpRequest'
+import HttpRequest from '@/http/httpRequest'
+import { createMessage } from '@/message/showMessage'
+
+const httpRequest = new HttpRequest()
 
 const { t } = useI18n()
 
@@ -126,17 +129,17 @@ async function downloadFile(name: string) {
     a.click()
     window.URL.revokeObjectURL(url)
   } catch {
-    window.$message?.error('下载失败')
+    createMessage('error', '下载失败')
   }
 }
 
 async function deleteFile(name: string) {
   try {
     await httpRequest.deleteLogFile(name)
-    window.$message?.success('删除成功')
+    createMessage('success', '删除成功')
     loadLogFiles()
   } catch {
-    window.$message?.error('删除失败')
+    createMessage('error', '删除失败')
   }
 }
 
