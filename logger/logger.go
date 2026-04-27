@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,8 +17,50 @@ import (
 )
 
 var (
-	LogChan = make(chan string, 100)
+	LogChan       = make(chan string, 100)
+	broadcastChan = make(chan LogEntry, 100)
 )
+
+type LogEntry struct {
+	Time    string `json:"time"`
+	Level   string `json:"level"`
+	Message string `json:"message"`
+}
+
+type Broadcaster struct {
+	clients map[chan LogEntry]bool
+	mu      sync.RWMutex
+}
+
+var LogBroadcaster = &Broadcaster{
+	clients: make(map[chan LogEntry]bool),
+}
+
+func (b *Broadcaster) Subscribe() chan LogEntry {
+	ch := make(chan LogEntry, 10)
+	b.mu.Lock()
+	b.clients[ch] = true
+	b.mu.Unlock()
+	return ch
+}
+
+func (b *Broadcaster) Unsubscribe(ch chan LogEntry) {
+	b.mu.Lock()
+	delete(b.clients, ch)
+	b.mu.Unlock()
+	close(ch)
+}
+
+func (b *Broadcaster) Broadcast(entry LogEntry) {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	for ch := range b.clients {
+		select {
+		case ch <- entry:
+		default:
+		}
+	}
+}
 
 func GetLogFileName() string {
 	return fmt.Sprintf("logs/log_%s.log", GetFormatDate())
@@ -75,18 +118,21 @@ func Info(message ...string) {
 	msg := strings.Join(message, " ")
 	color.Printf("<fg=gray;>[%s]</> <bg=blue;> INFO </> %s\n", GetFormatTime(), msg)
 	WriteToFile(fmt.Sprintf("[%s][INFO] - %s\n", GetFormatTime(), msg))
+	LogBroadcaster.Broadcast(LogEntry{Time: GetFormatTime(), Level: "INFO", Message: msg})
 }
 
 func Warning(message ...string) {
 	msg := strings.Join(message, " ")
 	color.Printf("<fg=gray;>[%s]</> <bg=yellow;> WARN </> %s\n", GetFormatTime(), msg)
 	WriteToFile(fmt.Sprintf("[%s][WARN] - %s\n", GetFormatTime(), msg))
+	LogBroadcaster.Broadcast(LogEntry{Time: GetFormatTime(), Level: "WARN", Message: msg})
 }
 
 func Error(message ...string) {
 	msg := strings.Join(message, " ")
 	color.Printf("<fg=gray;>[%s]</> <bg=red;> ERROR </> %s\n", GetFormatTime(), msg)
 	WriteToFile(fmt.Sprintf("[%s][ERROR] - %s\n", GetFormatTime(), msg))
+	LogBroadcaster.Broadcast(LogEntry{Time: GetFormatTime(), Level: "ERROR", Message: msg})
 }
 
 func LogRequest(c *gin.Context) {
