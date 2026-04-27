@@ -24,3 +24,21 @@ type ConfigFile struct {
 		WildcardMainPort string `json:"wildcard_main_port"`
 	} `json:"wildcard"`
 }
+
+type SystemInfo struct {
+	CPUModel    string  `json:"cpu_model"`
+	CPUCores    int     `json:"cpu_cores"`
+	CPUThreads  int     `json:"cpu_threads"`
+	CPUUsage    float64 `json:"cpu_usage"`
+	MemoryTotal uint64  `json:"memory_total"`
+	MemoryUsed  uint64  `json:"memory_used"`
+	MemoryFree  uint64  `json:"memory_free"`
+	OSName      string  `json:"os_name"`
+	OSVersion   string  `json:"os_version"`
+	Uptime      uint64  `json:"uptime"`
+}
+
+type UserPreferences struct {
+	Language string `json:"language"`
+	Theme    string `json:"theme"`
+}
