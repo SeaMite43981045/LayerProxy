@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NLayoutHeader, NSpace, NButton, NIcon, NTag } from 'naive-ui'
 import { Moon, Sun } from 'lucide-vue-next'
@@ -30,11 +30,8 @@ import { createMessage } from '@/message/showMessage'
 
 const httpRequest = new HttpRequest()
 const { t } = useI18n()
-const isDark = ref(true)
-
-function toggleTheme() {
-  isDark.value = !isDark.value
-}
+const isDark = inject('isDark')
+const toggleTheme = inject('toggleTheme') as () => void
 
 async function handleCheckUpdate() {
   try {

@@ -44,4 +44,18 @@ const router = createRouter({
   ],
 })
 
+router.beforeEach((to, _from, next) => {
+  const token = localStorage.getItem('lp_token')
+  const publicPages = ['Login', 'Setup']
+  const isPublic = publicPages.includes(to.name as string)
+
+  if (!token && !isPublic) {
+    next({ name: 'Login' })
+  } else if (token && isPublic) {
+    next({ name: 'Dashboard' })
+  } else {
+    next()
+  }
+})
+
 export default router

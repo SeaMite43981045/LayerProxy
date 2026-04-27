@@ -28,6 +28,7 @@ const handleLogin = async () => {
     .then((data) => {
       authService.setToken(data.data.token)
       createMessage('success', '登录成功')
+      router.push({ name: 'Dashboard' })
     })
     .catch((error: AxiosError<ResponseError>) => {
       if (error.response?.data.redirect) {

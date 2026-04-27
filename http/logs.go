@@ -6,7 +6,6 @@ package http
 
 import (
 	"LayerProxy/logger"
-	"LayerProxy/utils"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -91,18 +90,6 @@ func HandleDeleteLogFile(c *gin.Context) {
 }
 
 func HandleLogStream(c *gin.Context) {
-	token := c.Query("token")
-	if token == "" {
-		token = c.GetHeader("Authorization")
-		if len(token) > 7 && token[:7] == "Bearer " {
-			token = token[7:]
-		}
-	}
-	if token == "" || !utils.ValidateToken(token) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "未授权"})
-		return
-	}
-
 	c.Header("Content-Type", "text/event-stream")
 	c.Header("Cache-Control", "no-cache")
 	c.Header("Connection", "keep-alive")

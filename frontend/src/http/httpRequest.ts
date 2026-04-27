@@ -1,8 +1,20 @@
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { authService } from '@/services/authService'
 import axios from 'axios'
+import router from '@/router'
 
 export const BASE_URL: string = '/api'
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('lp_token')
+      router.push({ name: 'Login' })
+    }
+    return Promise.reject(error)
+  },
+)
 
 export default class HttpRequest {
   private async _makeRequest(
