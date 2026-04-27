@@ -45,6 +45,13 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
+			// SSE 无法设置 header，尝试从 query param 获取
+			authHeader = c.Query("token")
+			if authHeader != "" {
+				authHeader = "Bearer " + authHeader
+			}
+		}
+		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "未授权，请先登录"})
 			c.Abort()
 			return
