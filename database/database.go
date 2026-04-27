@@ -52,6 +52,16 @@ func InitDB() {
 	if err != nil {
 		logger.Error("清理无效数据库记录失败: " + err.Error())
 	}
+
+	_, err = DB.Exec(`CREATE TABLE IF NOT EXISTS preferences (
+		id INTEGER PRIMARY KEY CHECK (id = 1),
+		language TEXT DEFAULT 'zh',
+		theme TEXT DEFAULT 'dark'
+	)`)
+	if err != nil {
+		logger.Error("创建 preferences 表失败: " + err.Error())
+		return
+	}
 }
 
 func GetServersFromDB() []models.ProxyInstance {
