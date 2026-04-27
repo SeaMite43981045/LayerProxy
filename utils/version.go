@@ -5,4 +5,4 @@
 package utils
 
 const Version = "1.0.0"
-const RepoURL = "SeaMite43981045/LayerProxy"
+const RepoPath = "SeaMite43981045/LayerProxy"
