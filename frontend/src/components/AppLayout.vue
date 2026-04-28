@@ -1,9 +1,9 @@
 <template>
-  <n-layout style="height: 100vh;">
+  <n-layout style="height: 100vh">
     <Navbar />
-    <n-layout has-sider style="height: calc(100vh - 48px);">
+    <n-layout has-sider style="height: calc(100vh - 48px)">
       <Sidebar />
-      <n-layout-content style="padding: 20px; overflow: auto;">
+      <n-layout-content style="padding: 20px; overflow: auto">
         <router-view />
       </n-layout-content>
     </n-layout>

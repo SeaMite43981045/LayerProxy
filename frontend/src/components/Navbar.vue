@@ -1,8 +1,15 @@
 <template>
-  <n-layout-header bordered style="height: 48px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;">
-    <div style="font-size: 16px; font-weight: bold;">
-      LayerProxy
-    </div>
+  <n-layout-header
+    bordered
+    style="
+      height: 48px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    "
+  >
+    <div style="font-size: 16px; font-weight: bold">LayerProxy</div>
     <n-space align="center">
       <n-button text tag="a" href="https://github.com/SeaMite43981045/LayerProxy" target="_blank">
         {{ t('navbar.docs') }}

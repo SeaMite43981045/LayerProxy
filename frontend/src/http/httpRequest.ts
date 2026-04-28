@@ -84,7 +84,7 @@ export default class HttpRequest {
   }
 
   async downloadLogFile(name: string) {
-    return this._makeRequest(`/v1/logs/files/${name}`, 'get')
+    return this._makeRequest(`/v1/logs/files/${name}`, 'get', undefined, 'blob')
   }
 
   async deleteLogFile(name: string) {
@@ -105,5 +105,13 @@ export default class HttpRequest {
 
   async getServers() {
     return this._makeRequest('/v1/servers', 'get')
+  }
+
+  async addServer(data: { name: string; backend_ip: string; subdomain: string }) {
+    return this._makeRequest('/v1/servers', 'post', data)
+  }
+
+  async deleteServer(name: string) {
+    return this._makeRequest(`/v1/servers/${name}`, 'delete')
   }
 }

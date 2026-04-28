@@ -1,8 +1,8 @@
 <template>
-  <n-card style="max-width: 800px; margin: 0 auto;">
+  <n-card style="max-width: 800px; margin: 0 auto">
     <n-tabs type="line" animated>
       <n-tab-pane :name="t('settings.systemConfig')" :tab="t('settings.systemConfig')">
-        <n-form label-placement="left" label-width="160px" style="margin-top: 16px;">
+        <n-form label-placement="left" label-width="160px" style="margin-top: 16px">
           <n-form-item :label="t('settings.webPort')">
             <n-input v-model:value="config.web_port" />
             <template #feedback>{{ t('settings.webPortDesc') }}</template>
@@ -25,7 +25,7 @@
         </n-form>
       </n-tab-pane>
       <n-tab-pane :name="t('settings.preferences')" :tab="t('settings.preferences')">
-        <n-form label-placement="left" label-width="160px" style="margin-top: 16px;">
+        <n-form label-placement="left" label-width="160px" style="margin-top: 16px">
           <n-form-item :label="t('settings.language')">
             <n-select v-model:value="prefs.language" :options="languageOptions" />
           </n-form-item>
@@ -45,8 +45,15 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
-  NCard, NTabs, NTabPane, NForm, NFormItem,
-  NInput, NInputNumber, NSelect, NButton,
+  NCard,
+  NTabs,
+  NTabPane,
+  NForm,
+  NFormItem,
+  NInput,
+  NInputNumber,
+  NSelect,
+  NButton,
 } from 'naive-ui'
 import HttpRequest from '@/http/httpRequest'
 import { createMessage } from '@/message/showMessage'

@@ -101,17 +101,17 @@ const handleSetupCommit = () => {
     .setup(
       inputKeyValue.value,
       portStartPort.value,
-      wildDomain.value || "",
+      wildDomain.value || '',
       wildPort.value?.toString(),
     )
     .then((data) => {
-      if (data.data.status == "ok") {
-        createMessage("success", "Success", data.data.message)
-        router.push({ name: "Login" })
+      if (data.data.status == 'ok') {
+        createMessage('success', 'Success', data.data.message)
+        router.push({ name: 'Login' })
       }
     })
     .catch((error: AxiosError<ResponseError>) => {
-      createMessage("error", "Failed", error.response?.data.error)
+      createMessage('error', 'Failed', error.response?.data.error)
     })
     .finally(() => {
       isLoading.value = false
@@ -121,8 +121,8 @@ const handleSetupCommit = () => {
 onMounted(() => {
   httpRequest.status().then((data) => {
     if (data.data.hasKey as boolean) {
-      createMessage("error", "提示", "你已经完成了初始化")
-      router.push({ name: "Login" })
+      createMessage('error', '提示', '你已经完成了初始化')
+      router.push({ name: 'Login' })
     }
   })
 })
@@ -178,7 +178,7 @@ onMounted(() => {
                   </n-input>
                   <n-flex :justify="'end'">
                     <n-button :render-icon="() => h(ArrowBigRightIcon)" @click="handleKeyNext">
-                        下一步
+                      下一步
                     </n-button>
                   </n-flex>
                 </n-flex>

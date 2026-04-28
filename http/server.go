@@ -234,7 +234,7 @@ func StartAPI(ctx context.Context, cfg models.ConfigFile) {
 	<-ctx.Done()
 	logger.Info("正在关闭 Web 管理接口...")
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		logger.Error("Web 服务关闭失败: " + err.Error())

@@ -94,14 +94,21 @@ func HandleLogStream(c *gin.Context) {
 	c.Header("Cache-Control", "no-cache")
 	c.Header("Connection", "keep-alive")
 
-	ch := logger.LogBroadcaster.Subscribe()
-	defer logger.LogBroadcaster.Unsubscribe(ch)
-
 	flusher, ok := c.Writer.(http.Flusher)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Streaming not supported"})
 		return
 	}
+
+	ch := logger.LogBroadcaster.Subscribe()
+	defer logger.LogBroadcaster.Unsubscribe(ch)
+
+	// Send initial connection event
+	fmt.Fprintf(c.Writer, "event: connected\ndata: {}\n\n")
+	flusher.Flush()
+
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
 
 	for {
 		select {
@@ -111,6 +118,9 @@ func HandleLogStream(c *gin.Context) {
 			}
 			data, _ := json.Marshal(entry)
 			fmt.Fprintf(c.Writer, "event: log\ndata: %s\n\n", data)
+			flusher.Flush()
+		case <-ticker.C:
+			fmt.Fprintf(c.Writer, "event: ping\ndata: {}\n\n")
 			flusher.Flush()
 		case <-c.Request.Context().Done():
 			return
